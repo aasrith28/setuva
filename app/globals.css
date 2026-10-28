@@ -3,11 +3,539 @@
 @tailwind utilities;
 
 :root {
-  --background: #181410;
+  --background: #0a0a0b;
   --foreground: #f4e8d7;
+  --glow-gold: #e7c6a0;
+  --glow-ember: #f3a878;
+  --glow-blue: #60a5fa;
+  --surface: #111113;
+  --surface-hover: #1a1a1d;
+  --border: #1f1f23;
+  --border-glow: rgba(231, 198, 160, 0.15);
+  --text-muted: #71717a;
+  --text-secondary: #a1a1aa;
+}
+
+/* ═══════════════════════════════════════════════════
+   GLOBAL FOUNDATION — Aceternity-inspired dark base
+   ═══════════════════════════════════════════════════ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1f1f23 transparent;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--glow-gold);
+  color: var(--background);
+}
+
+/* ═══════════════════════════════════════════════════
+   ANIMATED GRADIENT MESH BACKGROUND — Magic UI style
+   ═══════════════════════════════════════════════════ */
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(1deg); }
+  66% { transform: translateY(6px) rotate(-1deg); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.02); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes shimmer-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes text-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes border-beam {
+  0% { offset-distance: 0%; }
+  100% { offset-distance: 100%; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spotlight {
+  0% { opacity: 0; transform: translate(-72%, -62%) scale(0.5); }
+  100% { opacity: 1; transform: translate(-50%, -40%) scale(1); }
+}
+
+@keyframes grid-fade {
+  0% { opacity: 0; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
+@keyframes meteor {
+  0% { transform: rotate(215deg) translateX(0); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: rotate(215deg) translateX(-500px); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════
+   ANIMATED DOT GRID BACKGROUND — React Bits style
+   ═══════════════════════════════════════════════════ */
+
+.dot-grid-bg {
+  background-image: radial-gradient(rgba(231, 198, 160, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.grid-lines-bg {
+  background-image:
+    linear-gradient(rgba(231, 198, 160, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(231, 198, 160, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ═══════════════════════════════════════════════════
+   HERO SPOTLIGHT — Aceternity spotlight effect
+   ═══════════════════════════════════════════════════ */
+
+.hero-spotlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-spotlight::before {
+  content: "";
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  top: -20%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+  background: radial-gradient(
+    ellipse,
+    rgba(231, 198, 160, 0.08) 0%,
+    rgba(243, 168, 120, 0.04) 30%,
+    transparent 70%
+  );
+  animation: spotlight 2s ease forwards, pulse-glow 6s ease-in-out infinite 2s;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   GLOWING BORDER CARDS — Aceternity glowing effect
+   ═══════════════════════════════════════════════════ */
+
+.glow-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glow-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    transparent 20%,
+    rgba(231, 198, 160, 0.1) 40%,
+    rgba(243, 168, 120, 0.08) 60%,
+    transparent 80%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.glow-card:hover::before {
+  opacity: 1;
+}
+
+.glow-card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(231, 198, 160, 0.06) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.glow-card:hover::after {
+  opacity: 1;
+}
+
+.glow-card:hover {
+  border-color: rgba(231, 198, 160, 0.15);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(231, 198, 160, 0.05),
+    0 20px 40px -12px rgba(0, 0, 0, 0.5),
+    0 0 60px -20px rgba(231, 198, 160, 0.08);
+}
+
+/* ═══════════════════════════════════════════════════
+   SHIMMER TEXT — Magic UI animated gradient text
+   ═══════════════════════════════════════════════════ */
+
+.text-shimmer {
+  background: linear-gradient(
+    110deg,
+    var(--glow-gold) 25%,
+    #fff 37%,
+    var(--glow-gold) 63%,
+    var(--glow-ember) 75%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 4s ease-in-out infinite;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--glow-gold) 0%, var(--glow-ember) 50%, var(--glow-gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ═══════════════════════════════════════════════════
+   BORDER BEAM — Magic UI animated border
+   ═══════════════════════════════════════════════════ */
+
+.border-beam-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.border-beam-wrapper::after {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: var(--glow-gold);
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0.6;
+  animation: border-beam 6s linear infinite;
+  offset-path: rect(0 100% 100% 0 round 16px);
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   BENTO GRID — Magic UI style
+   ═══════════════════════════════════════════════════ */
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 1rem;
+}
+
+.bento-item-wide { grid-column: span 2; }
+.bento-item-tall { grid-row: span 2; }
+
+@media (max-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .bento-item-wide,
+  .bento-item-tall {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   METEOR EFFECT — Aceternity falling lines
+   ═══════════════════════════════════════════════════ */
+
+.meteor-effect .meteor {
+  position: absolute;
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(to bottom, var(--glow-gold), transparent);
+  opacity: 0;
+  animation: meteor var(--duration, 5s) var(--delay, 0s) linear infinite;
+  top: -80px;
+}
+
+/* ═══════════════════════════════════════════════════
+   MARQUEE — Magic UI infinite scroll
+   ═══════════════════════════════════════════════════ */
+
+.marquee-container {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1.5rem;
+  width: max-content;
+  animation: marquee-left 30s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ═══════════════════════════════════════════════════
+   ANIMATED NUMBER COUNTER — Smooth UI style
+   ═══════════════════════════════════════════════════ */
+
+.stat-card {
+  position: relative;
+  background: linear-gradient(135deg, var(--surface) 0%, rgba(17, 17, 19, 0.8) 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--glow-gold), transparent);
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════════════════════
+   GLASS MORPHISM — Smooth UI style
+   ═══════════════════════════════════════════════════ */
+
+.glass {
+  background: rgba(17, 17, 19, 0.6);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-gold {
+  background: rgba(231, 198, 160, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(231, 198, 160, 0.1);
+}
+
+/* ═══════════════════════════════════════════════════
+   ANIMATED BADGE / PILL — Magic UI
+   ═══════════════════════════════════════════════════ */
+
+.badge-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.badge-glow::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: shimmer-slide 3s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   CTA BUTTON — Enhanced Obra CTA with glow
+   ═══════════════════════════════════════════════════ */
+
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  border: 1px solid var(--glow-gold);
+  border-radius: 999px;
+  background: var(--glow-gold);
+  color: var(--background);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 0 0 0 rgba(231, 198, 160, 0.4),
+    0 8px 24px -8px rgba(0, 0, 0, 0.5);
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+  transform: translateX(-110%);
+  transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  pointer-events: none;
+}
+
+.btn-primary:hover {
+  background: #f4e8d7;
+  border-color: #f4e8d7;
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 30px 4px rgba(231, 198, 160, 0.3),
+    0 20px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+.btn-primary:hover::before {
+  transform: translateX(110%);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--glow-ember);
+  outline-offset: 4px;
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--glow-gold);
+  color: var(--glow-gold);
+  background: rgba(231, 198, 160, 0.05);
+}
+
+/* ═══════════════════════════════════════════════════
+   ENTRANCE ANIMATIONS — Fade-up on scroll feel
+   ═══════════════════════════════════════════════════ */
+
+.animate-fade-up {
+  animation: fade-up 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+
+/* ═══════════════════════════════════════════════════
+   DIVIDER LINE — Gradient separator
+   ═══════════════════════════════════════════════════ */
+
+.divider-gradient {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-glow), rgba(231, 198, 160, 0.2), var(--border-glow), transparent);
+}
+
+/* ═══════════════════════════════════════════════════
+   REDUCED MOTION — Accessibility
+   ═══════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
 }
