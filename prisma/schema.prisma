@@ -1,0 +1,160 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String               @id @default(uuid())
+  email        String               @unique
+  passwordHash String
+  name         String
+  role         String               @default("user") // "user", "content_reviewer", "publisher", "admin"
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  saved        SavedService[]
+  trackers     ApplicationTracker[]
+  reminders    Reminder[]
+  auditLogs    AuditLog[]
+}
+
+model Service {
+  id                     String               @id @default(uuid())
+  slug                   String               @unique
+  name                   String
+  category               String
+  jurisdiction           String               @default("Karnataka")
+  description            String
+  officialApplicationUrl String
+  status                 String               @default("draft") // "draft", "pending_review", "verified", "stale", "conflicting", "retired"
+  currentVersion         String               @default("1.0.0")
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+  rules                  EligibilityRule[]
+  documents              RequiredDocument[]
+  sources                OfficialSource[]
+  savedBy                SavedService[]
+  trackers               ApplicationTracker[]
+  revisions              ServiceRevision[]
+}
+
+model EligibilityRule {
+  id            String   @id @default(uuid())
+  serviceId     String
+  field         String
+  operator      String   // "equals", "in", "lte", "gte", "contains", "boolean"
+  expectedValue String
+  explanation   String
+  isMandatory   Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  service       Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model RequiredDocument {
+  id               String   @id @default(uuid())
+  serviceId        String
+  name             String
+  isMandatory      Boolean  @default(true)
+  guidance         String
+  officialSourceId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  service          Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model OfficialSource {
+  id                 String   @id @default(uuid())
+  serviceId          String?
+  url                String
+  issuingAuthority   String
+  sourceType         String   // "portal", "gazette", "guidelines", "order"
+  lastCheckedDate    DateTime @default(now())
+  verificationStatus String   @default("pending_review") // "pending_review", "verified", "stale", "conflicting", "retired"
+  excerpt            String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  service            Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model ServiceRevision {
+  id            String   @id @default(uuid())
+  serviceId     String
+  version       String
+  changeSummary String
+  authorId      String
+  snapshot      String   // JSON string of full service snapshot
+  createdAt     DateTime @default(now())
+  service       Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model SavedService {
+  id        String   @id @default(uuid())
+  userId    String
+  serviceId String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, serviceId])
+}
+
+model ApplicationTracker {
+  id        String          @id @default(uuid())
+  userId    String
+  serviceId String
+  status    String          @default("not_started") // "not_started", "in_progress", "documents_ready", "submitted_externally"
+  notes     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service   Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  checklist ChecklistItem[]
+  reminders Reminder[]
+
+  @@unique([userId, serviceId])
+}
+
+model ChecklistItem {
+  id              String             @id @default(uuid())
+  trackerId       String
+  title           String
+  isRequired      Boolean            @default(true)
+  isCompleted     Boolean            @default(false)
+  sourceReference String?
+  note            String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  tracker         ApplicationTracker @relation(fields: [trackerId], references: [id], onDelete: Cascade)
+}
+
+model Reminder {
+  id          String              @id @default(uuid())
+  userId      String
+  trackerId   String?
+  remindAt    DateTime
+  timezone    String              @default("Asia/Kolkata")
+  message     String
+  isDelivered Boolean             @default(false)
+  isCancelled Boolean             @default(false)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tracker     ApplicationTracker? @relation(fields: [trackerId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  actorRole  String
+  action     String
+  entityType String
+  entityId   String
+  details    String?  // JSON string
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+}

@@ -1,0 +1,130 @@
+.obra-cta-frame {
+  --obra-ink: #181410;
+  --obra-gild: #e7c6a0;
+  --obra-parchment: #f4e8d7;
+  --obra-bronze: #9d8a72;
+  --obra-ember: #f3a878;
+  --obra-font-display: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --obra-font-italic: "Playfair Display", Georgia, serif;
+  --obra-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  font-family: var(--obra-font-display);
+}
+
+.obra-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1rem 1.65rem;
+  border: 1px solid var(--obra-gild);
+  border-radius: 999px;
+  background: var(--obra-gild);
+  color: var(--obra-ink);
+  font-family: var(--obra-font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow:
+    0 1px 0 rgba(255, 230, 200, 0.45) inset,
+    0 18px 32px -22px rgba(0, 0, 0, 0.7);
+  transition:
+    background 240ms var(--obra-ease),
+    color 240ms var(--obra-ease),
+    transform 240ms var(--obra-ease),
+    box-shadow 240ms var(--obra-ease);
+}
+
+.obra-cta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(244, 232, 215, 0.55) 50%,
+    transparent 70%
+  );
+  transform: translateX(-110%);
+  transition: transform 700ms var(--obra-ease);
+  pointer-events: none;
+}
+
+.obra-cta:hover {
+  background: var(--obra-parchment);
+  border-color: var(--obra-parchment);
+  transform: translateY(-2px);
+}
+
+.obra-cta:hover::after {
+  transform: translateX(110%);
+}
+
+.obra-cta:focus-visible {
+  outline: 2px solid var(--obra-ember);
+  outline-offset: 4px;
+}
+
+.obra-cta:active {
+  transform: translateY(0);
+}
+
+.obra-cta__arrow {
+  position: relative;
+  z-index: 1;
+  font-family: var(--obra-font-italic);
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform 240ms var(--obra-ease);
+}
+
+.obra-cta:hover .obra-cta__arrow {
+  transform: translateX(0.35rem);
+}
+
+.obra-cta__label {
+  position: relative;
+  z-index: 1;
+}
+
+.obra-cta__hint {
+  margin: 0;
+  font-family: var(--obra-font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--obra-bronze);
+}
+
+.obra-cta__hint em {
+  font-family: var(--obra-font-italic);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--obra-gild);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .obra-cta,
+  .obra-cta::after,
+  .obra-cta__arrow {
+    transition: none;
+  }
+
+  .obra-cta:hover {
+    transform: none;
+  }
+}
